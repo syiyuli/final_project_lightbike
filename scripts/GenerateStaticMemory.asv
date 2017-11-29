@@ -1,0 +1,12 @@
+%% Create data memory
+clear; format short;
+
+%% Data constants
+mif_file = "data_memory.mif";
+load('ColorMap');
+dmem_depth = 2^12;
+
+image_files = {'cards.png'};
+
+%% data vectors
+data_vec

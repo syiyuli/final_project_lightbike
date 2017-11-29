@@ -43,9 +43,15 @@ begin
 end
 //////////////////////////
 //////INDEX addr.
+wire inBike;
+assign inBike = ADDR >= 19'd0 & ADDR <= 19'd60;
+
+wire[18:0] ADDRbike;
+assign ADDRbike = ADDR>19'd60 ? 19'd60 : ADDR;
+
 assign VGA_CLK_n = ~iVGA_CLK;
 img_data	img_data_inst (
-	.address ( ADDR ),
+	.address ( ADDRbike ),
 	.clock ( VGA_CLK_n ),
 	.q ( index )
 	);
@@ -59,17 +65,12 @@ wire[23:0] bgr_data_help;
 img_index	img_index_inst (
 	.address ( index ),
 	.clock ( iVGA_CLK ),
-	.q ( bgr_data_raw)
+	.q ( bgr_data_help)
 	);	
 
-	
+assign bgr_data_raw = inBike ? bgr_data_help : 24'hFFFFFF;
 //307200 words
 
-
-//assign gridLine = ADDR > 60 && ADDR < 68;
-//wire notBike;
-//assign notBike = bgr_data_help == 24'hFFFFFF;
-//assign bgr_data_raw = notBike ? 32'h303030 : bgr_data_help;
 
 //////
 //////latch valid data at falling edge;
