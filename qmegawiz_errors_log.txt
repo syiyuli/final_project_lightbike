@@ -1,0 +1,10 @@
+
+
+C:/Users/Student/Downloads/lab7_skeleton (2)_restored/VGA_Audio_PLL.v
+
+Nov 28 05PM:32:30>: Error in CNX file format.
+
+Error messages are listed in file
+C:/Users/Student/Downloads/lab7_skeleton (2)_restored/VGA_Audio_PLL.cnxerr.
+
+Can't create the custom megafunction variation file(s)
