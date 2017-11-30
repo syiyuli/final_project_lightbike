@@ -162,6 +162,45 @@ set_location_assignment PIN_H21 -to leds[4]
 set_location_assignment PIN_G20 -to leds[5]
 set_location_assignment PIN_G22 -to leds[6]
 set_location_assignment PIN_G21 -to leds[7]
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_global_assignment -name QIP_FILE VGA_Audio_PLL.qip
+set_global_assignment -name QIP_FILE img_index.qip
+set_global_assignment -name QIP_FILE img_data.qip
+set_global_assignment -name VERILOG_FILE X.v
+set_global_assignment -name VERILOG_FILE W.v
+set_global_assignment -name VERILOG_FILE typeSelector.v
+set_global_assignment -name VERILOG_FILE subtracter.v
+set_global_assignment -name VERILOG_FILE stall.v
+set_global_assignment -name VERILOG_FILE rsselector.v
+set_global_assignment -name VERILOG_FILE rightshifter.v
+set_global_assignment -name VERILOG_FILE regfile.v
+set_global_assignment -name VERILOG_FILE processor_tb.v
+set_global_assignment -name VERILOG_FILE pc.v
+set_global_assignment -name VERILOG_FILE orer.v
+set_global_assignment -name VERILOG_FILE opcodeDecoder.v
+set_global_assignment -name VERILOG_FILE M.v
+set_global_assignment -name VERILOG_FILE leftshifter.v
+set_global_assignment -name VERILOG_FILE img_index_inst.v
+set_global_assignment -name VERILOG_FILE img_data_inst.v
+set_global_assignment -name VERILOG_FILE imem_inst.v
+set_global_assignment -name VERILOG_FILE F_tb.v
+set_global_assignment -name VERILOG_FILE F.v
+set_global_assignment -name VERILOG_FILE eightcla.v
+set_global_assignment -name VERILOG_FILE D_tb.v
+set_global_assignment -name VERILOG_FILE dmem_inst.v
+set_global_assignment -name VERILOG_FILE dmem_bb.v
+set_global_assignment -name VERILOG_FILE D.v
+set_global_assignment -name VERILOG_FILE counter32.v
+set_global_assignment -name VERILOG_FILE clocktest.v
+set_global_assignment -name VERILOG_FILE cla_tb.v
+set_global_assignment -name VERILOG_FILE cla.v
+set_global_assignment -name VERILOG_FILE branch.v
+set_global_assignment -name VERILOG_FILE ander.v
+set_global_assignment -name VERILOG_FILE aluopcodeDecoder.v
+set_global_assignment -name VERILOG_FILE alu.v
 set_global_assignment -name MIF_FILE index.mif
 set_global_assignment -name MIF_FILE index_logo.mif
 set_global_assignment -name MIF_FILE img_bars.mif
@@ -198,7 +237,4 @@ set_global_assignment -name CDF_FILE output_files/Chain1.cdf
 set_global_assignment -name VERILOG_FILE checkXbyY.v
 set_global_assignment -name VECTOR_WAVEFORM_FILE output_files/Waveform.vwf
 set_global_assignment -name VERILOG_FILE output_files/convertAddr.v
-set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
-set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
-set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
-set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_global_assignment -name VERILOG_FILE convertAddr.v

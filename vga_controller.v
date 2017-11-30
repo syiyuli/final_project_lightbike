@@ -5,11 +5,14 @@ module vga_controller(iRST_n,
                       oVS,
                       b_data,
                       g_data,
-                      r_data);
+                      r_data,
+							 //bikeOrient
+							 );
 
 	
 input iRST_n;
 input iVGA_CLK;
+//input[1:0] bikeOrient;
 output reg oBLANK_n;
 output reg oHS;
 output reg oVS;
@@ -45,13 +48,14 @@ end
 //////INDEX addr.
 
 wire[23:0] bikeLocation;
-assign bikeLocation = 24'd150000;
+assign bikeOrient = 2'd1;
+assign bikeLocation = 24'd12000;
 
 wire inBike;
 checkXbyY checkBikeLoc(.X(30),.Y(30),.startaddr(bikeLocation),.addr(ADDR),.out(inBike));
 
 wire[18:0] ADDRbike, ADDRbikeHelp;
-convertAddr getBikeAddr(.startaddr(bikeLocation),.addr(ADDR),.memAddr(ADDRbikeHelp));
+convertAddr getBikeAddr(.startaddr(bikeLocation),.addr(ADDR),.orient(bikeOrient),.memAddr(ADDRbikeHelp));
 
 assign ADDRbike = inBike ? ADDRbikeHelp : 19'd1;
 
@@ -74,7 +78,7 @@ img_index	img_index_inst (
 	.q ( bgr_data_help)
 	);	
 
-assign bgr_data_raw = inBike ? bgr_data_help : 24'hFFFFFF;
+assign bgr_data_raw = inBike ? bgr_data_help : 24'h000000;
 //307200 words
 
 
