@@ -31,7 +31,7 @@ video_sync_generator LTM_ins (.vga_clk(iVGA_CLK),
                               .HS(cHS),
                               .VS(cVS));
 ////
-////Addresss generator
+////Address generator
 always@(posedge iVGA_CLK,negedge iRST_n)
 begin
   if (!iRST_n)
@@ -43,11 +43,17 @@ begin
 end
 //////////////////////////
 //////INDEX addr.
-wire inBike;
-assign inBike = ADDR >= 19'd0 & ADDR <= 19'd60;
 
-wire[18:0] ADDRbike;
-assign ADDRbike = ADDR>19'd60 ? 19'd60 : ADDR;
+wire[23:0] bikeLocation;
+assign bikeLocation = 24'd150000;
+
+wire inBike;
+checkXbyY checkBikeLoc(.X(30),.Y(30),.startaddr(bikeLocation),.addr(ADDR),.out(inBike));
+
+wire[18:0] ADDRbike, ADDRbikeHelp;
+convertAddr getBikeAddr(.startaddr(bikeLocation),.addr(ADDR),.memAddr(ADDRbikeHelp));
+
+assign ADDRbike = inBike ? ADDRbikeHelp : 19'd1;
 
 assign VGA_CLK_n = ~iVGA_CLK;
 img_data	img_data_inst (

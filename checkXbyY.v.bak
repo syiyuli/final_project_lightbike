@@ -1,0 +1,9 @@
+module checkXbyY(X, Y, startaddr, addr,out); 
+input[9:0] X,Y;
+input[18:0] addr;
+output out;
+
+assign out = addr <
+
+
+endmodule
