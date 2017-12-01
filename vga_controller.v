@@ -6,12 +6,13 @@ module vga_controller(iRST_n,
                       b_data,
                       g_data,
                       r_data,
-							 //bikeOrient
+							 bluebike
 							 );
 
 	
 input iRST_n;
 input iVGA_CLK;
+input [31:0] bluebike;
 //input[1:0] bikeOrient;
 output reg oBLANK_n;
 output reg oHS;
@@ -48,8 +49,8 @@ end
 //////INDEX addr.
 
 wire[23:0] bikeLocation;
-assign bikeOrient = 2'd1;
-assign bikeLocation = 24'd12000;
+assign bikeOrient = bluebike[1:0];
+assign bikeLocation = bluebike[20:2];
 
 wire inBike;
 checkXbyY checkBikeLoc(.X(30),.Y(30),.startaddr(bikeLocation),.addr(ADDR),.out(inBike));

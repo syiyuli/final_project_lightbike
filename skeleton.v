@@ -37,8 +37,6 @@ module skeleton(resetn,
 	
 	
 	
-	
-	
 	wire			 clock;
 	wire			 lcd_write_en;
 	wire 	[31:0] lcd_write_data;
@@ -54,7 +52,8 @@ module skeleton(resetn,
 	//assign clock = inclock;
 	
 	// your processor
-	processor myprocessor(clock, ~resetn, /*ps2_key_pressed, ps2_out, lcd_write_en, lcd_write_data,*/ debug_data_in, debug_addr);
+	wire [31:0] bikeblue;
+	processor myprocessor(.clock(clock), .reset(~resetn), /*ps2_key_pressed, ps2_out, lcd_write_en, lcd_write_data,*/ .dmem_data_in(debug_data_in), .dmem_address(debug_addr), .bikeblue(bikeblue));
 	
 	// keyboard controller
 	PS2_Interface myps2(clock, resetn, ps2_clock, ps2_data, ps2_key_data, ps2_key_pressed, ps2_out);
@@ -87,7 +86,8 @@ module skeleton(resetn,
 								 .oVS(VGA_VS),
 								 .b_data(VGA_B),
 								 .g_data(VGA_G),
-								 .r_data(VGA_R));
+								 .r_data(VGA_R),
+								 .bluebike(bikeblue));
 	
 	
 endmodule
