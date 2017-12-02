@@ -11,7 +11,10 @@ module skeleton(resetn,
 	VGA_R,   														//	VGA Red[9:0]
 	VGA_G,	 														//	VGA Green[9:0]
 	VGA_B,															//	VGA Blue[9:0]
-	CLOCK_50);  													// 50 MHz clock
+	CLOCK_50,
+	master_switch,
+	master_switch_out,
+	reg27);  													// 50 MHz clock
 		
 	////////////////////////	VGA	////////////////////////////
 	output			VGA_CLK;   				//	VGA Clock
@@ -22,8 +25,11 @@ module skeleton(resetn,
 	output	[7:0]	VGA_R;   				//	VGA Red[9:0]
 	output	[7:0]	VGA_G;	 				//	VGA Green[9:0]
 	output	[7:0]	VGA_B;   				//	VGA Blue[9:0]
+	output			master_switch_out;
+	output			reg27;
 	input				CLOCK_50;
-
+	input				master_switch;
+	
 	////////////////////////	PS2	////////////////////////////
 	input 			resetn;
 	inout 			ps2_data, ps2_clock;
@@ -35,6 +41,7 @@ module skeleton(resetn,
 	output 	[31:0] 	debug_data_in;
 	output   [11:0]   debug_addr;
 	
+	assign master_switch_out = reg27;
 	
 	
 	wire			 clock;
@@ -53,7 +60,9 @@ module skeleton(resetn,
 	
 	// your processor
 	wire [31:0] bikeblue;
-	processor myprocessor(.clock(clock), .reset(~resetn), /*ps2_key_pressed, ps2_out, lcd_write_en, lcd_write_data,*/ .dmem_data_in(debug_data_in), .dmem_address(debug_addr), .bikeblue(bikeblue));
+	wire [1:0] bikeblueOrient;
+	processor myprocessor(.masterSwitch(master_switch),.clock(clock), .reset(~resetn), /*ps2_key_pressed, ps2_out, lcd_write_en, lcd_write_data,*/ .dmem_data_in(debug_data_in), .dmem_address(debug_addr), .bikeblue(bikeblue), .bikeblueOrient(bikeblueOrient), .reg27(reg27));
+
 	
 	// keyboard controller
 	PS2_Interface myps2(clock, resetn, ps2_clock, ps2_data, ps2_key_data, ps2_key_pressed, ps2_out);
@@ -87,7 +96,8 @@ module skeleton(resetn,
 								 .b_data(VGA_B),
 								 .g_data(VGA_G),
 								 .r_data(VGA_R),
-								 .bluebike(bikeblue));
+								 .bikeblue(bikeblue),
+								 .bikeblueOrient(bikeblueOrient));
 	
 	
 endmodule

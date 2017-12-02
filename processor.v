@@ -29,8 +29,8 @@
  * Outputs: 32-bit data at the given address
  *
  */ 
-module processor(clock, reset, dmem_data_in, dmem_address, instructionFDout, pcout, pcFDout, pcDXout, pcXMout, j1enDXout, j2enDXout, ren_outDXout, ren_outXMout, ren_outMWout, menDXout, benDXout, exenDXout, OoutXMout, BoutXMout, aluopDXout, aluopfin, shamtDXout, rd_outDXout, ADXout, BDXout, selectDXout, selectXMout, dataMWout, OoutMWout, selectMWout, rd_outXMout, rd_outMWout, readADXout, readBDXout, readBXMout, dataW, readAD, readBD, stall, flush, benfinal, bikeblue);
-    input clock, reset;
+module processor(masterSwitch, clock, reset, dmem_data_in, dmem_address, instructionFDout, pcout, pcFDout, pcDXout, pcXMout, j1enDXout, j2enDXout, ren_outDXout, ren_outXMout, ren_outMWout, menDXout, benDXout, exenDXout, OoutXMout, BoutXMout, aluopDXout, aluopfin, shamtDXout, rd_outDXout, ADXout, BDXout, selectDXout, selectXMout, dataMWout, OoutMWout, selectMWout, rd_outXMout, rd_outMWout, readADXout, readBDXout, readBXMout, dataW, readAD, readBD, stall, flush, benfinal, bikeblue, bikeblueOrient,reg27);
+    input clock, reset, masterSwitch;
 
     output [31:0] dmem_data_in;
     output [11:0] dmem_address;
@@ -183,8 +183,10 @@ module processor(clock, reset, dmem_data_in, dmem_address, instructionFDout, pco
 	 assign readBDin = readBD;
 	 
 	 // Decode
-	 output [31:0] bikeblue;
-	 D myD(ADXin, BDXin, readAD, readBD, clock, reset, ren_outMWout, rd_outMWout, dataW, bikeblue);
+	 output [31:0] bikeblue, bikeblueOrient;
+	 output reg27;
+	 D myD(ADXin, BDXin, readAD, readBD, clock, reset, ren_outMWout, rd_outMWout, dataW, bikeblue, bikeblueOrient, masterSwitch, reg27);
+	 
 	 
 	 // eXecute
 	 output [4:0] aluopfin;

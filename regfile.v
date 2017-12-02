@@ -3,15 +3,17 @@ module regfile (
     ctrl_writeEnable,
     ctrl_reset, ctrl_writeReg,
     ctrl_readRegA, ctrl_readRegB, data_writeReg,
-    data_readRegA, data_readRegB, bikeblue
+    data_readRegA, data_readRegB, bikeblue, bikeblueOrient, masterSwitch, reg27
 );
 
    input clock, ctrl_writeEnable, ctrl_reset;
    input [4:0] ctrl_writeReg, ctrl_readRegA, ctrl_readRegB;
    input [31:0] data_writeReg;
-
+	input masterSwitch;
+	
    output [31:0] data_readRegA, data_readRegB;
-
+	output reg27;
+	
 	wire [31:0] out_decoder;
 	wire [31:0] writeEnable;
 	wire [31:0] out_decoderReadA;
@@ -25,9 +27,24 @@ module regfile (
 	// register
 	genvar i; 
 	generate 
-		for(i=0;i<32;i=i+1) begin: loop1
+		for(i=0;i<27;i=i+1) begin: loop1
 			and andEnable(writeEnable[i], ctrl_writeEnable,out_decoder[i]);
 			register a_register(data_writeReg, writeEnable[i], clock, ctrl_reset,allRegisters[i]);
+		end
+	endgenerate
+	
+	wire [31:0] masterIn;
+	assign masterIn[0] = masterSwitch;
+	assign masterIn[31:1] = 31'd0;
+	
+	register register_27(masterIn, 1'b1, clock, ctrl_reset,allRegisters[27]);
+	assign reg27 = allRegisters[27][0];
+	
+	genvar k; 
+	generate 
+		for(k=28;k<32;k=k+1) begin: loop10
+			and andEnable(writeEnable[k], ctrl_writeEnable,out_decoder[k]);
+			register a_register(data_writeReg, writeEnable[k], clock, ctrl_reset,allRegisters[k]);
 		end
 	endgenerate
 	
@@ -44,8 +61,9 @@ module regfile (
 	endgenerate
 	
 	// read register 29
-	output[31:0] bikeblue;
+	output[31:0] bikeblue, bikeblueOrient;
 	assign bikeblue = allRegisters[29];
+	assign bikeblueOrient = allRegisters[28];
 	
 endmodule
 
