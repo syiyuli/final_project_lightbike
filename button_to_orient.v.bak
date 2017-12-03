@@ -1,0 +1,8 @@
+module button_to_orient(current, buttonLeft, buttonRight, out);
+
+input[31:0] current;
+input buttonLeft, buttonRight;
+output[31:0] out;
+
+
+endmodule 

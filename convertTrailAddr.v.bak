@@ -1,0 +1,7 @@
+module convertTrailAddr(ADDR, trail_ADDR);
+	input[18:0] ADDR;
+	output [10:0] trail_ADDR;
+	
+	
+
+endmodule
