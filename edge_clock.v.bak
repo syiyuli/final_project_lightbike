@@ -1,0 +1,11 @@
+module edge_clock()
+	// Internal Registers
+	reg			clock_data;	
+	
+	always @(posedge inclock)
+	begin
+		if (resetn == 1'b0)
+			last_data_received <= 8'h00;
+		else if (ps2_key_pressed == 1'b1)
+			last_data_received <= ps2_key_data;
+	end
