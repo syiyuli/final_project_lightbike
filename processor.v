@@ -29,7 +29,7 @@
  * Outputs: 32-bit data at the given address
  *
  */ 
-module processor(masterSwitch, clock, reset, dmem_data_in, dmem_address, instructionFDout, pcout, pcFDout, pcDXout, pcXMout, j1enDXout, j2enDXout, ren_outDXout, ren_outXMout, ren_outMWout, menDXout, benDXout, exenDXout, OoutXMout, BoutXMout, aluopDXout, aluopfin, shamtDXout, rd_outDXout, ADXout, BDXout, selectDXout, selectXMout, dataMWout, OoutMWout, selectMWout, rd_outXMout, rd_outMWout, readADXout, readBDXout, readBXMout, dataW, readAD, readBD, stall, flush, benfinal, bikeblue, bikeblueOrient,reg27);
+module processor(masterSwitch, bikeoneOrient_IN, biketwoOrient_IN, bikethreeOrient_IN, bikefourOrient_IN, clock, reset, dmem_data_in, dmem_address, bikeone, bikeoneOrient, biketwo, biketwoOrient, bikethree, bikethreeOrient, bikefour, bikefourOrient, reg27);
     input clock, reset, masterSwitch;
 
     output [31:0] dmem_data_in;
@@ -49,7 +49,7 @@ module processor(masterSwitch, clock, reset, dmem_data_in, dmem_address, instruc
 	 dffe1 exend_dff(.d(exenDin),.q(exenDout),.clk(~clock),.ena(1'b1),.clrn(~reset),.prn(1'b1)); // ED	
 	 
 	 // Instantiate all outputs from DX
-	 output j1enDXout, j2enDXout, ren_outDXout, menDXout, benDXout, exenDXout;
+	 wire j1enDXout, j2enDXout, ren_outDXout, menDXout, benDXout, exenDXout;
 	 dffe1 j1dx_dff(.d(j1enDout),.q(j1enDXout),.clk(clock),.ena(1'b1),.clrn(~reset),.prn(1'b1));  // J1DX
 	 dffe1 j2dx_dff(.d(j2enDout),.q(j2enDXout),.clk(clock),.ena(1'b1),.clrn(~reset),.prn(1'b1));  // J2DX
 	 dffe1 rendx_dff(.d(ren_outDout),.q(ren_outDXout),.clk(clock),.ena(1'b1),.clrn(~reset),.prn(1'b1)); // Ren_out DX
@@ -58,21 +58,21 @@ module processor(masterSwitch, clock, reset, dmem_data_in, dmem_address, instruc
 	 dffe1 exendx_dff(.d(exenDout),.q(exenDXout),.clk(clock),.ena(1'b1),.clrn(~reset),.prn(1'b1)); // EDX
 	 
 	 // Need to be passed on to execute
-	 output ren_outXMout;
+	 wire ren_outXMout;
 	 wire ren_outXout;
 	 dffe1 renx_dff(.d(ren_outDXout),.q(ren_outXout),.clk(~clock),.ena(1'b1),.clrn(~reset),.prn(1'b1));
 	 dffe1 renxm_dff(.d(ren_outXout),.q(ren_outXMout),.clk(clock),.ena(1'b1),.clrn(~reset),.prn(1'b1)); // Ren_out, XM	 
 	 
 	 // Need to be passed on to memory
 	 wire ren_outMout;
-	 output ren_outMWout;
+	 wire ren_outMWout;
 	 dffe1 renm_dff(.d(ren_outXMout),.q(ren_outMout),.clk(~clock),.ena(1'b1),.clrn(~reset),.prn(1'b1));
 	 dffe1 renmw_dff(.d(ren_outMout),.q(ren_outMWout),.clk(clock),.ena(1'b1),.clrn(~reset),.prn(1'b1)); // Ren_out, XM
 	 
-	 output [4:0] shamtDXout, aluopDXout, rd_outDXout;
+	 wire [4:0] shamtDXout, aluopDXout, rd_outDXout;
 	 wire [4:0] shamtDXin, aluopDXin, rd_outDXin, readADout, readBDout, readBXout;
 	 wire [4:0] shamtDin, aluopDin, rd_outDin, rd_outXin, readADin, readBDin, shamtDout, aluopDout, rd_outDout, rd_outXout, rd_outMout, rd_outWout;
-	 output [4:0] rd_outXMout, rd_outMWout, readADXout, readBDXout, readBXMout;
+	 wire [4:0] rd_outXMout, rd_outMWout, readADXout, readBDXout, readBXMout;
 	 genvar h;
 	 generate
 		for(h=0;h<5;h=h+1) begin : Hloop
@@ -99,7 +99,7 @@ module processor(masterSwitch, clock, reset, dmem_data_in, dmem_address, instruc
 		end
 	 endgenerate	
 	 
-	 output [11:0] pcout, pcFDout, pcDXout, pcXMout;
+	 wire [11:0] pcout, pcFDout, pcDXout, pcXMout;
 	 wire [11:0] pcDout, pcXout, pcXin, pcXMin, pcin;
 	 genvar i;
 	 generate
@@ -133,7 +133,7 @@ module processor(masterSwitch, clock, reset, dmem_data_in, dmem_address, instruc
 		end
 	 endgenerate
 	 
-	 output [31:0] instructionFDout, OoutXMout, BoutXMout, ADXout, BDXout, selectDXout, selectXMout, selectMWout, dataMWout, OoutMWout, dataW;
+	 wire [31:0] instructionFDout, OoutXMout, BoutXMout, ADXout, BDXout, selectDXout, selectXMout, selectMWout, dataMWout, OoutMWout, dataW;
 	 wire [31:0] instructionFDin, OoutXMin, BoutXMin;
 	 wire [31:0] ADXin, BDXin, selectDXin, selectXMin, selectMWin, dataMWin, dataWBin;
 	 wire [31:0] ADin, BDin, selectDin, selectXin, OoutXin, BoutXin, ADout, BDout, selectDout, selectXout, selectMout, OoutXout, BoutXout, OoutMout;
@@ -165,11 +165,11 @@ module processor(masterSwitch, clock, reset, dmem_data_in, dmem_address, instruc
 			end
 	 endgenerate
 	 
-	 output stall;
+	 wire stall;
 	 
 	 // Choose where the next PC is
 	 wire firstin, firstout;
-	 output flush;
+	 wire flush;
 	 dffe1 first_dffe(.d(firstin),.q(firstout),.clk(clock),.ena(1'b1),.clrn(~reset),.prn(1'b1));
 	 pc mypc(.next(pcin),.current(pcout), .stall(stall), .prev(pcFDout), .reset(reset), .jump1en(j1enDXout), .jump2en(j2enDXout), .ben(benfinal),.jumprt(ADXout[11:0]), .jumpt(targetDXout[11:0]),.N(immediateDXout), .firstin(firstout), .firstout(firstin),.flush(flush));
 	 
@@ -177,20 +177,20 @@ module processor(masterSwitch, clock, reset, dmem_data_in, dmem_address, instruc
 	 F myF(.clock(clock),.pcin(pcin),.instruction(instructionFDin));
 	 
 	 // Stall Logic
-	 output[4:0] readAD, readBD;
+	 wire[4:0] readAD, readBD;
 	 stall mystall(stall, selectDXout[8], rd_outDXout, instructionFDout, j1enDin, j2enDin, ren_outDin, menDin, benDin, exenDin, aluopDin, shamtDin, rd_outDin, readAD, readBD, immediateDin, targetDin, selectDin, flush);	 
 	 assign readADin = readAD;
 	 assign readBDin = readBD;
 	 
 	 // Decode
-	 output [31:0] bikeblue, bikeblueOrient;
+	 input[31:0] bikeoneOrient_IN, biketwoOrient_IN, bikethreeOrient_IN, bikefourOrient_IN;
+	 output [31:0] bikeone, bikeoneOrient, biketwo, biketwoOrient, bikethree, bikethreeOrient, bikefour, bikefourOrient;
 	 output reg27;
-	 D myD(ADXin, BDXin, readAD, readBD, clock, reset, ren_outMWout, rd_outMWout, dataW, bikeblue, bikeblueOrient, masterSwitch, reg27);
-	 
+	 D myD(ADXin, BDXin, readAD, readBD, clock, reset, ren_outMWout, rd_outMWout, dataW, bikeone, bikeoneOrient, biketwo, biketwoOrient, bikethree, bikethreeOrient, bikefour, bikefourOrient, masterSwitch, reg27, bikeoneOrient_IN, biketwoOrient_IN, bikethreeOrient_IN, bikefourOrient_IN);
 	 
 	 // eXecute
-	 output [4:0] aluopfin;
-	 output benfinal;
+	 wire [4:0] aluopfin;
+	 wire benfinal;
 	 X myX(menDXout, benDXout, exenDXout, aluopDXout, ADXout, BDXout, readADXout, readBDXout, rd_outDXout, rd_outXin, ren_outXMout, rd_outXMout, OoutXMout, ren_outMWout, rd_outMWout, dataW, selectDXout, immediateDXout, targetDXout, shamtDXout, aluopfin, OoutXin, BoutXin, reset, pcDXout, benfinal);	 
 	 
 	 // Memory, BoutXMout is rd data, OoutXMout is rs+N address (or should be)
