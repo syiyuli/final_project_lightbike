@@ -58,6 +58,7 @@ module skeleton(reset,
 	
 	// clock divider (by 5, i.e., 10 MHz)
 	pll div(CLOCK_50,inclock);
+	// pll div2(inclock, inclock2);
 	// assign clock = CLOCK_50;
 	
 	// UNCOMMENT FOLLOWING LINE AND COMMENT ABOVE LINE TO RUN AT 50 MHz
@@ -86,19 +87,27 @@ module skeleton(reset,
 	assign fourup = 8'h75;
 	assign fourdown = 8'h73;
 	
+	// Bike Controls
 	bike_controls bike_controls_one(bikeoneleft,bikeoneright,bikeoneup,bikeonedown,oneleft,oneright,oneup,onedown,ps2_key_pressed, ps2_key_data);
 	bike_controls bike_controls_two(biketwoleft,biketworight,biketwoup,biketwodown,twoleft,tworight,twoup,twodown,ps2_key_pressed, ps2_key_data);
 	bike_controls bike_controls_three(bikethreeleft,bikethreeright,bikethreeup,bikethreedown,threeleft,threeright,threeup,threedown,ps2_key_pressed, ps2_key_data);
 	bike_controls bike_controls_four(bikefourleft,bikefourright,bikefourup,bikefourdown,fourleft,fourright,fourup,fourdown,ps2_key_pressed, ps2_key_data);
 
+	wire [7:0] backgroundzero, backgroundone, backgroundtwo, backgroundthree, backgroundfour;
+	assign backgroundzero = 8'h16;
+	assign backgroundone = 8'h1e;
+	assign backgroundtwo = 8'h26;
+	assign backgroundthree = 8'h25;
+	assign backgroundfour = 8'h2e;
+	
+	// Background Controls
+	background_controls background_controls_1(background_out, background_in, backgroundzero, backgroundone, backgroundtwo, backgroundthree, backgroundfour,ps2_key_pressed, ps2_key_data);
+	
 	// May Have to do Edge Detection for Bikes themselves	
 	wire [31:0] bikeone, bikeoneOrient, bikeoneOrient_IN, biketwoOrient_IN, bikethreeOrient_IN, bikefourOrient_IN, biketwo, biketwoOrient, bikethree, bikethreeOrient, bikefour, bikefourOrient;
+	wire [31:0] bikeoneOrient_INtemp, biketwoOrient_INtemp, bikethreeOrient_INtemp, bikefourOrient_INtemp;
 	wire master_switch_help, final_edge, bikeone_crash, biketwo_crash, bikethree_crash, bikefour_crash, bikeone_total, biketwo_total, bikethree_total, bikefour_total, game_finished, four_player_mode_final;	
-	edge_clock edge_clock_one(clock, resetn, bikeone_crash, bikeone_total);
-	edge_clock edge_clock_two(clock, resetn, biketwo_crash, biketwo_total);
-	edge_clock edge_clock_three(clock, resetn, bikethree_crash, bikethree_total);
-	edge_clock edge_clock_four(clock, resetn, bikefour_crash, bikefour_total);
-	game_over game_over_finished(bikeone_total, biketwo_total, bikethree_total, bikefour_total, four_player_mode, game_finished);
+	game_over game_over_finished(bikeone_crash, biketwo_crash, bikethree_crash, bikefour_crash, four_player_mode, game_finished);
 	edge_clock edge_clock_final(clock, resetn, game_finished, final_edge);
 	and masterFinal(master_switch_help, master_switch, ~final_edge);
 	
@@ -106,9 +115,38 @@ module skeleton(reset,
 	button_to_orient changespeedtwo(biketwoOrient, biketwoleft, biketworight, biketwoup, biketwodown, biketwo_crash, biketwoOrient_IN);
 	button_to_orient changespeedthree(bikethreeOrient, bikethreeleft, bikethreeright, bikethreeup, bikethreedown, bikethree_crash, bikethreeOrient_IN);
 	button_to_orient changespeedfour(bikefourOrient, bikefourleft, bikefourright, bikefourup, bikefourdown, bikefour_crash, bikefourOrient_IN);
-
-	processor myprocessor(.masterSwitch(master_switch_help), .bikeoneOrient_IN(bikeoneOrient_IN) ,.biketwoOrient_IN(biketwoOrient_IN), .bikethreeOrient_IN(bikethreeOrient_IN), .bikefourOrient_IN(bikefourOrient_IN), .clock(clock), .reset(~resetn), .bikeone(bikeone), .bikeoneOrient(bikeoneOrient), .biketwo(biketwo), .biketwoOrient(biketwoOrient), .bikethree(bikethree),.bikethreeOrient(bikethreeOrient), .bikefour(bikefour),.bikefourOrient(bikefourOrient),.reg27(reg27));
 	
+	wire [31:0] bikeonepowerup_in,  biketwopowerup_in, bikethreepowerup_in, bikefourpowerup_in, bikeonepowerup_out, biketwopowerup_out, bikethreepowerup_out, bikefourpowerup_out;
+	wire [31:0] background_in, background_out;
+	// processor myprocessor(.masterSwitch(master_switch_help), .bikeoneOrient_IN(bikeoneOrient_IN) ,.biketwoOrient_IN(biketwoOrient_IN), .bikethreeOrient_IN(bikethreeOrient_IN), .bikefourOrient_IN(bikefourOrient_IN), .clock(clock), .reset(~resetn), .bikeone(bikeone), .bikeoneOrient(bikeoneOrient), .biketwo(biketwo), .biketwoOrient(biketwoOrient), .bikethree(bikethree),.bikethreeOrient(bikethreeOrient), .bikefour(bikefour),.bikefourOrient(bikefourOrient),.reg27(reg27));
+	processor myprocessor(.masterSwitch(master_switch_help),
+								.bikeoneOrient_IN(bikeoneOrient_IN) ,
+								.biketwoOrient_IN(biketwoOrient_IN), 
+								.bikethreeOrient_IN(bikethreeOrient_IN), 
+								.bikefourOrient_IN(bikefourOrient_IN), 
+								.clock(clock), 
+								.reset(~resetn), 
+								.bikeone(bikeone), 
+								.bikeoneOrient(bikeoneOrient), 
+								.biketwo(biketwo), 
+								.biketwoOrient(biketwoOrient), 
+								.bikethree(bikethree),
+								.bikethreeOrient(bikethreeOrient),
+								.bikefour(bikefour),
+								.bikefourOrient(bikefourOrient),
+								.reg27(reg27),
+								.bikeonepowerup_in(bikeonepowerup_in),
+								.biketwopowerup_in(biketwopowerup_in),
+								.bikethreepowerup_in(bikethreepowerup_in),
+								.bikefourpowerup_in(bikefourpowerup_in),
+								.background_in(background_in),
+								.bikeonepowerup_out(bikeonepowerup_out),
+								.biketwopowerup_out(biketwopowerup_out),
+								.bikethreepowerup_out(bikethreepowerup_out),
+								.bikefourpowerup_out(bikefourpowerup_out),
+								.background_out(background_out)
+								);
+
 	// keyboard controller
 	PS2_Interface myps2(clock, resetn, ps2_clock, ps2_data, ps2_key_data, ps2_key_pressed, ps2_out);
 	
@@ -118,17 +156,6 @@ module skeleton(reset,
 	// example for sending ps2 data to the first two seven segment displays
 	Hexadecimal_To_Seven_Segment hex1(ps2_out[3:0], seg1);
 	Hexadecimal_To_Seven_Segment hex2(ps2_out[7:4], seg2);
-	
-	// the other seven segment displays are currently set to 0
-	Hexadecimal_To_Seven_Segment hex3(4'b0, seg3);
-	Hexadecimal_To_Seven_Segment hex4(4'b0, seg4);
-	Hexadecimal_To_Seven_Segment hex5(4'b0, seg5);
-	Hexadecimal_To_Seven_Segment hex6(4'b0, seg6);
-	Hexadecimal_To_Seven_Segment hex7(4'b0, seg7);
-	Hexadecimal_To_Seven_Segment hex8(4'b0, seg8);
-	
-	// some LEDs that you could use for debugging if you wanted
-	assign leds = 8'b00101011;
 	
 	// VGA
 	Reset_Delay			r0	(.iCLK(CLOCK_50),.oRESET(DLY_RST));
@@ -157,5 +184,6 @@ module skeleton(reset,
 								 .bikefour_crash(bikefour_crash),
 								 .four_player_mode(four_player_mode),
 								 .master_switch(~master_switch_help),
+								 .background(background_out),
 								 .reset_map(reset_map));
 endmodule

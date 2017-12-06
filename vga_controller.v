@@ -22,11 +22,13 @@ module vga_controller(iRST_n,
 							 bikefour_crash,
 							 reset_map,
 							 four_player_mode,
+							 background,
 							 master_switch
 							 );
 
 input reset, reset_map, master_switch;
 input iRST_n;
+input [31:0] background;
 input clock;
 input four_player_mode;
 input iVGA_CLK;
@@ -122,7 +124,7 @@ wire [13:0] background_location;
 
 convertTrailAddr convertTrailAddrtrail_Location(ADDR, trail_location);
 convertTrailAddr convertTrailmenu_location(ADDR, menu_location);
-convertBackground convertBackground_Location(ADDR, 5'd0, background_location);
+convertBackground convertBackground_Location(ADDR, background[4:0], background_location);
 
 // Bike One
 assign bikeone_trailcolor = bikeoneColor + 3'd1;
@@ -169,15 +171,17 @@ checkScreenBound checkscreenBikefour(.addr(bikefour),.orient(bikefourOrient),.ou
 	
 // Edge Detection
 wire edge_detected_one, edge_detected_two, edge_detected_three, edge_detected_four;
-edge_detection edge_detection_one(trail_output, ADDR, bikeone_middle, bikeoneDirection, edge_detected_one);
-edge_detection edge_detection_two(trail_output, ADDR, biketwo_middle, biketwoDirection, edge_detected_two);
-edge_detection edge_detection_three(trail_output, ADDR, bikethree_middle, bikethreeDirection, edge_detected_three);
-edge_detection edge_detection_four(trail_output, ADDR, bikefour_middle, bikefourDirection, edge_detected_four);
+edge_detection edge_detection_one(trail_output, ADDR, bikeone_middle, bikeoneDirectionFinal, edge_detected_one, master_switch);
+edge_detection edge_detection_two(trail_output, ADDR, biketwo_middle, biketwoDirectionFinal, edge_detected_two, master_switch);
+edge_detection edge_detection_three(trail_output, ADDR, bikethree_middle, bikethreeDirectionFinal, edge_detected_three, master_switch);
+edge_detection edge_detection_four(trail_output, ADDR, bikefour_middle, bikefourDirectionFinal, edge_detected_four, master_switch);
 
 // Background Detection
-wire [2:0] background;
 wire background_detected_one, background_detected_two, background_detected_three, background_detected_four;
-
+bgr_detection backg_detection_one(background[4:0],ADDR,bikeone_middle,bikeoneDirectionFinal, background_detected_one);
+bgr_detection backg_detection_one(background[4:0],ADDR,biketwo_middle,biketwoDirectionFinal, background_detected_two);
+bgr_detection backg_detection_one(background[4:0],ADDR,bikethree_middle,bikethreeDirectionFinal, background_detected_three); 
+bgr_detection backg_detection_one(background[4:0],ADDR,bikefour_middle,bikefourDirectionFinal, background_detected_four);
 
 // Determine if Crash or not
 output bikeone_crash, biketwo_crash, bikethree_crash, bikefour_crash;
@@ -187,9 +191,6 @@ or or_three_died(bikethree_crash, edge_detected_three, background_detected_three
 or or_four_died(bikefour_crash, edge_detected_four, background_detected_four, bikefour_bounded);
 
 // If Crash, lock in direction
-// Try Redoing Direction Lock
-wire [3:0] bikeone_lock, biketwo_lock, bikethree_lock, bikefour_lock;
-
 assign bikeoneDirectionFinal = bikeone_crash ? 3'd5:bikeoneDirection;
 assign biketwoDirectionFinal = biketwo_crash ? 3'd5:biketwoDirection;
 assign bikethreeDirectionFinal = bikethree_crash ? 3'd5:bikethreeDirection;
@@ -250,15 +251,23 @@ menu_color menu_color_inst(
 
 // Lookup Powerups and Draw Powerups
 
+// Convert Trail Outputs into Color 
+wire[23:0] trail_output_color, trail_output_color_1, trail_output_color_2, trail_output_color_3, trail_output_color_4;
+assign trail_output_color_2 = trail_output==3'd2 ? 24'h0072FF:24'hFFBA00;
+assign trail_output_color_3 = trail_output==3'd3 ? 24'h12F100:trail_output_color_2;
+assign trail_output_color = trail_output==3'd4 ? 24'hFF00D8:trail_output_color_3;
 
 wire[23:0] bgr_data_bike, bgr_data_help, bgr_data_bike_one, bgr_data_bike_two, bgr_data_bike_three, bgr_data_bike_four, bgr_data_bike_final;
-wire[23:0] bgr_data_bike_edge;
+wire[23:0] bgr_data_bike_edge, bgr_trail_color;
+//assign bgr_data_bike = inBike ? bgr_data_help: bgr_background_data;
+//assign bgr_data_bike_one = (trail_output==3'd1 && ~inBikecenter&&bgr_data_bike==24'h000000) ? 24'hFF0000:bgr_data_bike;
+//assign bgr_data_bike_two = (trail_output==3'd2 && ~inBikecenter&&bgr_data_bike==24'h000000)? 24'h00A5FF:bgr_data_bike_one;
+//assign bgr_data_bike_three = (trail_output==3'd3 && ~inBikecenter&&bgr_data_bike==24'h000000)? 24'h00FF00:bgr_data_bike_two;
+//assign bgr_data_bike_four = (trail_output==3'd4 && ~inBikecenter&&bgr_data_bike==24'h000000)? 24'hFF3399:bgr_data_bike_three;
+//assign bgr_data_bike_edge = (bgr_menu_data!=24'h000000 && master_switch)?bgr_menu_data:bgr_data_bike_four;
 assign bgr_data_bike = inBike ? bgr_data_help: bgr_background_data;
-assign bgr_data_bike_one = (trail_output==3'd1 && ~inBikecenter&&bgr_data_bike==24'h000000) ? 24'hFF0000:bgr_data_bike;
-assign bgr_data_bike_two = (trail_output==3'd2 && ~inBikecenter&&bgr_data_bike==24'h000000)? 24'h00A5FF:bgr_data_bike_one;
-assign bgr_data_bike_three = (trail_output==3'd3 && ~inBikecenter&&bgr_data_bike==24'h000000)? 24'h00FF00:bgr_data_bike_two;
-assign bgr_data_bike_four = (trail_output==3'd4 && ~inBikecenter&&bgr_data_bike==24'h000000)? 24'hFF3399:bgr_data_bike_three;
-assign bgr_data_bike_edge = (bgr_menu_data!=24'h000000 && master_switch)?bgr_menu_data:bgr_data_bike_four;
+assign bgr_trail_color = (trail_output!=0 && ~inBikecenter && bgr_data_bike==24'h000000) ? trail_output_color:bgr_data_bike;
+assign bgr_data_bike_edge = (bgr_menu_data!=24'h000000 && master_switch)?bgr_menu_data:bgr_trail_color;
 
 //////
 //////latch valid data at falling edge;
