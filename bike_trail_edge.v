@@ -5,4 +5,5 @@ module bikeTrailEdge(bikeLocation_middle, vga_address, bike_orient, trail_over_b
 	output trail_over_bike;
 	
 	
+	
 endmodule
