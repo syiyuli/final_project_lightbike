@@ -1,0 +1,16 @@
+module direction_lock(clock, resetn, crash, direction_lock);
+	input 			clock, resetn, crash;
+	output		 	clock_data;
+
+	// Internal Registers
+	reg [1:0]			direction_lock;	
+	
+	always @(posedge clock)
+	begin
+		if (resetn == 1'b0)
+			clock_data <= 1'b0;
+		else if (edge_detected == 1'b1)
+			clock_data <= 1'b1;
+	end
+	
+endmodule
