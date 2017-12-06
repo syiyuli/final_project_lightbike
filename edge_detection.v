@@ -1,7 +1,7 @@
 module edge_detection(trail_output, addr, bikeLocation_middle, bike_orient, edge_detected);
 	input [3:0] trail_output;
 	input [18:0] addr;
-	input [1:0] bike_orient;
+	input [2:0] bike_orient;
 	input [18:0] bikeLocation_middle;
 	output edge_detected;
 	

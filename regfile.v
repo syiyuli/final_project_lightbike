@@ -12,7 +12,7 @@ module regfile (
    input [4:0] ctrl_writeReg, ctrl_readRegA, ctrl_readRegB;
    input [31:0] data_writeReg, bikeoneOrient_IN, biketwoOrient_IN, bikethreeOrient_IN, bikefourOrient_IN; //5 3 1;
 	input masterSwitch;
-	
+	// input [31:0] background_in, bikeonepowerup_in, biketwopowerup_in, bikethreepowerup_in, bikefourpowerup_in;
    output [31:0] data_readRegA, data_readRegB;
 	output reg27;
 	
@@ -34,6 +34,44 @@ module regfile (
 			register a_register(data_writeReg, writeEnable[i], clock, ctrl_reset,allRegisters[i]);
 		end
 	endgenerate
+
+	
+//	genvar i; 
+//	generate 
+//		for(i=0;i<9;i=i+1) begin: loop1
+//			and andEnable(writeEnable[i], ctrl_writeEnable,out_decoder[i]);
+//			register a_register(data_writeReg, writeEnable[i], clock, ctrl_reset,allRegisters[i]);
+//		end
+//	endgenerate
+// 
+// 
+//	and andEnable9(writeEnable[9], ctrl_writeEnable,out_decoder[9]);
+//	assign background_final = writeEnable[9] ? data_writeReg:background_in;
+//	register register_9(bikeground_final, 1'b1, clock, ctrl_reset,allRegisters[9]);
+// 
+//	and andEnable10(writeEnable[10], ctrl_writeEnable,out_decoder[10]);
+//	assign bikefourpowerup_final = writeEnable[10] ? data_writeReg:bikefourpowerup_in;
+//	register register_10(bikefourOrient_final, 1'b1, clock, ctrl_reset,allRegisters[10]);
+//
+//	and andEnable11(writeEnable[11], ctrl_writeEnable,out_decoder[11]);
+//	assign bikethreepowerup_final = writeEnable[11] ? data_writeReg:bikethreepowerup_in;
+//	register register_11(bikethreepowerup_final, 1'b1, clock, ctrl_reset,allRegisters[11]);
+//	
+//	and andEnable12(writeEnable[12], ctrl_writeEnable,out_decoder[12]);
+//	assign biketwopowerup_final = writeEnable[12] ? data_writeReg:biketwopowerup_in;
+//	register register_12(biketwopowerup_final, 1'b1, clock, ctrl_reset,allRegisters[12]);
+//	
+//	and andEnable13(writeEnable[13], ctrl_writeEnable,out_decoder[13]);
+//	assign bikeonepowerup_final = writeEnable[13] ? data_writeReg:bikeonepowerup_in;
+//	register register_13(bikeonepowerup_final, 1'b1, clock, ctrl_reset,allRegisters[13]);	
+//	
+//	genvar m; 
+//	generate 
+//		for(m=14;m<21;m=m+1) begin: loopm
+//			and andEnable(writeEnable[m], ctrl_writeEnable,out_decoder[m]);
+//			register a_register(data_writeReg, writeEnable[m], clock, ctrl_reset,allRegisters[m]);
+//		end
+//	endgenerate
 	
 	and and_22(writeEnable[22], ctrl_writeEnable,out_decoder[22]);
 	register a_register22(data_writeReg, writeEnable[22], clock, ctrl_reset,allRegisters[22]);
@@ -51,10 +89,23 @@ module regfile (
 	register register_27(masterIn, 1'b1, clock, ctrl_reset,allRegisters[27]);
 	assign reg27 = allRegisters[27][0];
 
-	register register_21(bikefourOrient_IN, 1'b1, clock, ctrl_reset,allRegisters[21]);
-	register register_23(bikethreeOrient_IN, 1'b1, clock, ctrl_reset,allRegisters[23]);
-	register register_25(biketwoOrient_IN, 1'b1, clock, ctrl_reset,allRegisters[25]);
-	register register_28(bikeoneOrient_IN, 1'b1, clock, ctrl_reset,allRegisters[28]);
+	wire [31:0] bikeoneOrient_final, biketwoOrient_final, bikethreeOrient_final, bikefourOrient_final;
+	
+	and andEnable21(writeEnable[21], ctrl_writeEnable,out_decoder[21]);
+	assign bikefourOrient_final = writeEnable[21] ? data_writeReg:bikefourOrient_IN;
+	register register_21(bikefourOrient_final, 1'b1, clock, ctrl_reset,allRegisters[21]);
+	
+	and andEnable23(writeEnable[23], ctrl_writeEnable,out_decoder[23]);
+	assign bikethreeOrient_final = writeEnable[23] ? data_writeReg:bikethreeOrient_IN;
+	register register_23(bikethreeOrient_final, 1'b1, clock, ctrl_reset,allRegisters[23]);
+	
+	and andEnable25(writeEnable[25], ctrl_writeEnable,out_decoder[25]);
+	assign biketwoOrient_final = writeEnable[25] ? data_writeReg:biketwoOrient_IN;
+	register register_25(biketwoOrient_final, 1'b1, clock, ctrl_reset,allRegisters[25]);
+	
+	and andEnable28(writeEnable[28], ctrl_writeEnable,out_decoder[28]);
+	assign bikeoneOrient_final = writeEnable[28] ? data_writeReg:bikeoneOrient_IN;
+	register register_28(bikeoneOrient_final, 1'b1, clock, ctrl_reset,allRegisters[28]);
 	
 	genvar k; 
 	generate 
@@ -80,20 +131,32 @@ module regfile (
 	output [31:0] bikefour, bikefourOrient; 
 	assign bikefour = allRegisters[22];
 	assign bikefourOrient = allRegisters[21];
+	// output [31:0] bikefourpowerup_out;
+	// assign bikefourpowerup_out = allRegisters[9];
+	
 	// read bike three values
 	output[31:0] bikethree, bikethreeOrient;
 	assign bikethree = allRegisters[24];
 	assign bikethreeOrient = allRegisters[23];
+	// output [31:0] bikethreepowerup_out; 
+	// assign bikethreepowerup_out = allRegisters[10];
+
 	// read bike two values
 	output[31:0] biketwo, biketwoOrient;
 	assign biketwo = allRegisters[26];
 	assign biketwoOrient = allRegisters[25];
+	// output[31:0] biketwopowerup_out;
+	// assign biketwopowerup_out = allRegisters[11];
+	
 	// read bike one values 
 	output[31:0] bikeone, bikeoneOrient;
 	assign bikeone = allRegisters[29];
-	
 	assign bikeoneOrient = allRegisters[28];
-	
+	// output[31:0] bikeonepowerup_out;
+	// assign bikeonepowerup_out = allRegisters[12];
+
+	// output[31:0] background;
+	// assign background = 	allRegister[13];
 endmodule
 
 module register(data, write_enable, clock, ctrl_reset, qout);

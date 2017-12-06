@@ -4,7 +4,7 @@
 // MODULE: altsyncram 
 
 // ============================================================
-// File Name: img_index.v
+// File Name: menu_color.v
 // Megafunction Name(s):
 // 			altsyncram
 //
@@ -37,7 +37,7 @@
 // synopsys translate_off
 `timescale 1 ps / 1 ps
 // synopsys translate_on
-module img_index (
+module menu_color (
 	address,
 	clock,
 	q);
@@ -84,7 +84,7 @@ module img_index (
 		altsyncram_component.address_aclr_a = "NONE",
 		altsyncram_component.clock_enable_input_a = "BYPASS",
 		altsyncram_component.clock_enable_output_a = "BYPASS",
-		altsyncram_component.init_file = "bikes_color.mif",
+		altsyncram_component.init_file = "../lightBikeMenu_color.mif",
 		altsyncram_component.intended_device_family = "Cyclone IV E",
 		altsyncram_component.lpm_hint = "ENABLE_RUNTIME_MOD=NO",
 		altsyncram_component.lpm_type = "altsyncram",
@@ -120,7 +120,7 @@ endmodule
 // Retrieval info: PRIVATE: JTAG_ENABLED NUMERIC "0"
 // Retrieval info: PRIVATE: JTAG_ID STRING "NONE"
 // Retrieval info: PRIVATE: MAXIMUM_DEPTH NUMERIC "0"
-// Retrieval info: PRIVATE: MIFfilename STRING "color_data.mif"
+// Retrieval info: PRIVATE: MIFfilename STRING "../lightBikeMenu_color.mif"
 // Retrieval info: PRIVATE: NUMWORDS_A NUMERIC "256"
 // Retrieval info: PRIVATE: RAM_BLOCK_TYPE NUMERIC "2"
 // Retrieval info: PRIVATE: RegAddr NUMERIC "1"
@@ -135,7 +135,7 @@ endmodule
 // Retrieval info: CONSTANT: ADDRESS_ACLR_A STRING "NONE"
 // Retrieval info: CONSTANT: CLOCK_ENABLE_INPUT_A STRING "BYPASS"
 // Retrieval info: CONSTANT: CLOCK_ENABLE_OUTPUT_A STRING "BYPASS"
-// Retrieval info: CONSTANT: INIT_FILE STRING "color_data.mif"
+// Retrieval info: CONSTANT: INIT_FILE STRING "../lightBikeMenu_color.mif"
 // Retrieval info: CONSTANT: INTENDED_DEVICE_FAMILY STRING "Cyclone IV E"
 // Retrieval info: CONSTANT: LPM_HINT STRING "ENABLE_RUNTIME_MOD=NO"
 // Retrieval info: CONSTANT: LPM_TYPE STRING "altsyncram"
@@ -153,12 +153,10 @@ endmodule
 // Retrieval info: CONNECT: @address_a 0 0 8 0 address 0 0 8 0
 // Retrieval info: CONNECT: @clock0 0 0 0 0 clock 0 0 0 0
 // Retrieval info: CONNECT: q 0 0 24 0 @q_a 0 0 24 0
-// Retrieval info: GEN_FILE: TYPE_NORMAL img_index.v TRUE
-// Retrieval info: GEN_FILE: TYPE_NORMAL img_index.inc FALSE
-// Retrieval info: GEN_FILE: TYPE_NORMAL img_index.cmp FALSE
-// Retrieval info: GEN_FILE: TYPE_NORMAL img_index.bsf FALSE
-// Retrieval info: GEN_FILE: TYPE_NORMAL img_index_inst.v TRUE
-// Retrieval info: GEN_FILE: TYPE_NORMAL img_index_bb.v FALSE
-// Retrieval info: GEN_FILE: TYPE_NORMAL img_index_waveforms.html TRUE
-// Retrieval info: GEN_FILE: TYPE_NORMAL img_index_wave*.jpg FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL menu_color.v TRUE
+// Retrieval info: GEN_FILE: TYPE_NORMAL menu_color.inc FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL menu_color.cmp FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL menu_color.bsf FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL menu_color_inst.v FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL menu_color_bb.v FALSE
 // Retrieval info: LIB_FILE: altera_mf
