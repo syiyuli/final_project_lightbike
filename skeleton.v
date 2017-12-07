@@ -109,16 +109,16 @@ module skeleton(reset,
 	wire master_switch_help, final_edge, bikeone_crash, biketwo_crash, bikethree_crash, bikefour_crash, bikeone_total, biketwo_total, bikethree_total, bikefour_total, game_finished, four_player_mode_final;	
 	game_over game_over_finished(bikeone_crash, biketwo_crash, bikethree_crash, bikefour_crash, four_player_mode, game_finished);
 	edge_clock edge_clock_final(clock, resetn, game_finished, final_edge);
-	and masterFinal(master_switch_help, master_switch, ~final_edge);
+	and masterFinal(master_switch_help, master_switch);
 	
 	button_to_orient changespeedone(bikeoneOrient, bikeoneleft, bikeoneright, bikeoneup, bikeonedown, bikeone_crash, bikeoneOrient_IN);
 	button_to_orient changespeedtwo(biketwoOrient, biketwoleft, biketworight, biketwoup, biketwodown, biketwo_crash, biketwoOrient_IN);
 	button_to_orient changespeedthree(bikethreeOrient, bikethreeleft, bikethreeright, bikethreeup, bikethreedown, bikethree_crash, bikethreeOrient_IN);
 	button_to_orient changespeedfour(bikefourOrient, bikefourleft, bikefourright, bikefourup, bikefourdown, bikefour_crash, bikefourOrient_IN);
 	
+	wire [31:0] randomwire;
 	wire [31:0] bikeonepowerup_in,  biketwopowerup_in, bikethreepowerup_in, bikefourpowerup_in, bikeonepowerup_out, biketwopowerup_out, bikethreepowerup_out, bikefourpowerup_out;
 	wire [31:0] background_in, background_out;
-	// processor myprocessor(.masterSwitch(master_switch_help), .bikeoneOrient_IN(bikeoneOrient_IN) ,.biketwoOrient_IN(biketwoOrient_IN), .bikethreeOrient_IN(bikethreeOrient_IN), .bikefourOrient_IN(bikefourOrient_IN), .clock(clock), .reset(~resetn), .bikeone(bikeone), .bikeoneOrient(bikeoneOrient), .biketwo(biketwo), .biketwoOrient(biketwoOrient), .bikethree(bikethree),.bikethreeOrient(bikethreeOrient), .bikefour(bikefour),.bikefourOrient(bikefourOrient),.reg27(reg27));
 	processor myprocessor(.masterSwitch(master_switch_help),
 								.bikeoneOrient_IN(bikeoneOrient_IN) ,
 								.biketwoOrient_IN(biketwoOrient_IN), 
@@ -177,11 +177,11 @@ module skeleton(reset,
 								 .bikethreeOrient(bikethreeOrient),
 								 .bikefour(bikefour),
 								 .bikefourOrient(bikefourOrient),
-								 .reset(resetn),
-								 .bikeone_crash(bikeone_crash),
-								 .biketwo_crash(biketwo_crash),
-								 .bikethree_crash(bikethree_crash),
-								 .bikefour_crash(bikefour_crash),
+								 .reset(~resetn),
+								 .bikeone_crash_out(bikeone_crash),
+								 .biketwo_crash_out(biketwo_crash),
+								 .bikethree_crash_out(bikethree_crash),
+								 .bikefour_crash_out(bikefour_crash),
 								 .four_player_mode(four_player_mode),
 								 .master_switch(~master_switch_help),
 								 .background(background_out),

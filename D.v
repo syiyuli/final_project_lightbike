@@ -19,7 +19,6 @@
 	assign ren_finin = r0 ? 1'b0:ren_in;
 	
 	// Instantiate the Regfile
-// 	regfile regfile1(.clock(~clock), .ctrl_writeEnable(ren_finin), .ctrl_reset(reset), .ctrl_writeReg(rd_in), .ctrl_readRegA(readA), .ctrl_readRegB(readB), .data_writeReg(data_write), .data_readRegA(A),.data_readRegB(B) , .bikeone(bikeone), .bikeoneOrient(bikeoneOrient), .biketwo(biketwo),.biketwoOrient(biketwoOrient),.bikethree(bikethree),.bikethreeOrient(bikethreeOrient),.bikefour(bikefour),.bikefourOrient(bikefourOrient),.masterSwitch(masterSwitch),.reg27(reg27), .bikeoneOrient_IN(bikeoneOrient_IN), .biketwoOrient_IN(biketwoOrient_IN), .bikethreeOrient_IN(bikethreeOrient_IN), .bikefourOrient_IN(bikefourOrient_IN));
 	regfile regfile1(.clock(~clock),
 							.ctrl_writeEnable(ren_finin), 
 							.ctrl_reset(reset), 

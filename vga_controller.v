@@ -16,10 +16,10 @@ module vga_controller(iRST_n,
 							 bikefour,
 							 bikefourOrient,
 							 reset,
-							 bikeone_crash,
-							 biketwo_crash,
-							 bikethree_crash,
-							 bikefour_crash,
+							 bikeone_crash_out,
+							 biketwo_crash_out,
+							 bikethree_crash_out,
+							 bikefour_crash_out,
 							 reset_map,
 							 four_player_mode,
 							 background,
@@ -84,20 +84,20 @@ movement_to_orient moveorienttwo(biketwoOrient, biketwoDirection);
 movement_to_orient moveorientthree(bikethreeOrient, bikethreeDirection);
 movement_to_orient moveorientfour(bikefourOrient, bikefourDirection);
 
-checkXbyY checkBikeOneLoc(.X(30),.Y(30),.startaddr(bikeone),.addr(ADDR),.orient(bikeoneDirectionFinal),.out(inBikeone));
-checkXbyY checkBikeTWoLoc(.X(30),.Y(30),.startaddr(biketwo),.addr(ADDR),.orient(biketwoDirectionFinal),.out(inBiketwo));
-checkXbyY checkBikeThreeLoc(.X(30),.Y(30),.startaddr(bikethree),.addr(ADDR),.orient(bikethreeDirectionFinal),.out(inBikethree));
-checkXbyY checkBikeFourLoc(.X(30),.Y(30),.startaddr(bikefour),.addr(ADDR),.orient(bikefourDirectionFinal),.out(inBikefour));
+checkXbyY checkBikeOneLoc(.X(30),.Y(30),.startaddr(bikeone),.addr(ADDR),.orient(bikeoneDirection),.out(inBikeone));
+checkXbyY checkBikeTWoLoc(.X(30),.Y(30),.startaddr(biketwo),.addr(ADDR),.orient(biketwoDirection),.out(inBiketwo));
+checkXbyY checkBikeThreeLoc(.X(30),.Y(30),.startaddr(bikethree),.addr(ADDR),.orient(bikethreeDirection),.out(inBikethree));
+checkXbyY checkBikeFourLoc(.X(30),.Y(30),.startaddr(bikefour),.addr(ADDR),.orient(bikefourDirection),.out(inBikefour));
 
 checkXbyYcenter checkBikeoneCen(bikeone,ADDR,inBikeonecenter);
 checkXbyYcenter checkBiketwoCen(biketwo,ADDR,inBiketwocenter);
 checkXbyYcenter checkBikethreeCen(bikethree,ADDR,inBikethreecenter);
 checkXbyYcenter checkBikefourCen(bikefour,ADDR,inBikefourcenter);
 
-convertAddr getBikeAddrone(.startaddr(bikeone),.addr(ADDR),.orient(bikeoneDirectionFinal), .color(bikeoneColor),.memAddr(ADDRbikeHelpone));
-convertAddr getBikeAddrtwo(.startaddr(biketwo),.addr(ADDR),.orient(biketwoDirectionFinal), .color(biketwoColor), .memAddr(ADDRbikeHelptwo));
-convertAddr getBikeAddrthree(.startaddr(bikethree),.addr(ADDR),.orient(bikethreeDirectionFinal), .color(bikethreeColor),.memAddr(ADDRbikeHelpthree));
-convertAddr getBikeAddrfour(.startaddr(bikefour),.addr(ADDR),.orient(bikefourDirectionFinal), .color(bikefourColor),.memAddr(ADDRbikeHelpfour));
+convertAddr getBikeAddrone(.startaddr(bikeone),.addr(ADDR),.orient(bikeoneDirection), .color(bikeoneColor),.memAddr(ADDRbikeHelpone));
+convertAddr getBikeAddrtwo(.startaddr(biketwo),.addr(ADDR),.orient(biketwoDirection), .color(biketwoColor), .memAddr(ADDRbikeHelptwo));
+convertAddr getBikeAddrthree(.startaddr(bikethree),.addr(ADDR),.orient(bikethreeDirection), .color(bikethreeColor),.memAddr(ADDRbikeHelpthree));
+convertAddr getBikeAddrfour(.startaddr(bikefour),.addr(ADDR),.orient(bikefourDirection), .color(bikefourColor),.memAddr(ADDRbikeHelpfour));
 
 assign ADDRbikeone = inBikeone ? ADDRbikeHelpone:ADDR;
 assign ADDRbiketwo = inBiketwo ? ADDRbikeHelptwo:ADDRbikeone;
@@ -171,34 +171,31 @@ checkScreenBound checkscreenBikefour(.addr(bikefour),.orient(bikefourOrient),.ou
 	
 // Edge Detection
 wire edge_detected_one, edge_detected_two, edge_detected_three, edge_detected_four;
-edge_detection edge_detection_one(trail_output, ADDR, bikeone_middle, bikeoneDirectionFinal, edge_detected_one, master_switch);
-edge_detection edge_detection_two(trail_output, ADDR, biketwo_middle, biketwoDirectionFinal, edge_detected_two, master_switch);
-edge_detection edge_detection_three(trail_output, ADDR, bikethree_middle, bikethreeDirectionFinal, edge_detected_three, master_switch);
-edge_detection edge_detection_four(trail_output, ADDR, bikefour_middle, bikefourDirectionFinal, edge_detected_four, master_switch);
+edge_detection edge_detection_one(trail_output, ADDR, bikeone_middle, bikeoneDirection, edge_detected_one, master_switch);
+edge_detection edge_detection_two(trail_output, ADDR, biketwo_middle, biketwoDirection, edge_detected_two, master_switch);
+edge_detection edge_detection_three(trail_output, ADDR, bikethree_middle, bikethreeDirection, edge_detected_three, master_switch);
+edge_detection edge_detection_four(trail_output, ADDR, bikefour_middle, bikefourDirection, edge_detected_four, master_switch);
 
 // Background Detection
 wire background_detected_one, background_detected_two, background_detected_three, background_detected_four;
-bgr_detection backg_detection_one(background[4:0],bgr_background_data,ADDR,bikeone_middle,bikeoneDirectionFinal, background_detected_one);
-bgr_detection backg_detection_two(background[4:0],bgr_background_data,ADDR,biketwo_middle,biketwoDirectionFinal, background_detected_two);
-bgr_detection backg_detection_three(background[4:0],bgr_background_data,ADDR,bikethree_middle,bikethreeDirectionFinal, background_detected_three); 
-bgr_detection backg_detection_four(background[4:0],bgr_background_data,ADDR,bikefour_middle,bikefourDirectionFinal, background_detected_four);
-//assign background_detected_one = 1'b0;
-//assign background_detected_two = 1'b0;
-//assign background_detected_three = 1'b0;
-//assign background_detected_four = 1'b0;
+bgr_detection backg_detection_one(background[4:0],bgr_background_data,ADDR,bikeone_middle,bikeoneDirection, background_detected_one);
+bgr_detection backg_detection_two(background[4:0],bgr_background_data,ADDR,biketwo_middle,biketwoDirection, background_detected_two);
+bgr_detection backg_detection_three(background[4:0],bgr_background_data,ADDR,bikethree_middle,bikethreeDirection, background_detected_three); 
+bgr_detection backg_detection_four(background[4:0],bgr_background_data,ADDR,bikefour_middle,bikefourDirection, background_detected_four);
 
 // Determine if Crash or not
-output bikeone_crash, biketwo_crash, bikethree_crash, bikefour_crash;
+output bikeone_crash_out, biketwo_crash_out, bikethree_crash_out, bikefour_crash_out;
 or or_one_died(bikeone_crash, edge_detected_one, background_detected_one, bikeone_bounded);
 or or_two_died(biketwo_crash, edge_detected_two, background_detected_two, biketwo_bounded);
 or or_three_died(bikethree_crash, edge_detected_three, background_detected_three, bikethree_bounded);
 or or_four_died(bikefour_crash, edge_detected_four, background_detected_four, bikefour_bounded);
 
-// If Crash, lock in direction
-assign bikeoneDirectionFinal = bikeone_crash ? 3'd5:bikeoneDirection;
-assign biketwoDirectionFinal = biketwo_crash ? 3'd5:biketwoDirection;
-assign bikethreeDirectionFinal = bikethree_crash ? 3'd5:bikethreeDirection;
-assign bikefourDirectionFinal = bikefour_crash ? 3'd5:bikefourDirection;
+// Latch Bike Crashes
+wire bikeone_crash, biketwo_crash, bikethree_crash, bikefour_crash;
+dffe1 bikeone_crashdff(.d(bikeone_crash),.q(bikeone_crash_out),.clk(clock),.ena(1'b1),.clrn(reset),.prn(1'b1));
+dffe1 biketwo_crashdff(.d(biketwo_crash),.q(biketwo_crash_out),.clk(clock),.ena(1'b1),.clrn(reset),.prn(1'b1));
+dffe1 bikethree_crashdff(.d(bikethree_crash),.q(bikethree_crash_out),.clk(clock),.ena(1'b1),.clrn(reset),.prn(1'b1));
+dffe1 bikefour_crashdff(.d(bikefour_crash),.q(bikefour_crash_out),.clk(clock),.ena(1'b1),.clrn(reset),.prn(1'b1));
 
 // Lookup Bikes and Draw Bikes
 assign VGA_CLK_n = ~iVGA_CLK;
@@ -211,13 +208,13 @@ img_data	img_data_inst (
 img_index	img_index_inst (
 	.address ( index ),
 	.clock ( iVGA_CLK ),
-	.q ( bgr_data_help)
+	.q (bgr_data_help)
 	);
 	
 // Trail Memory
 trail_mem trail_mem_inst (
 	.aclr(reset_map),
-	.clock(VGA_CLK_n),
+	.clock(iVGA_CLK),
 	.data(trail_input),
 	.rdaddress(trail_location),
 	.wraddress(store_trail),
@@ -253,6 +250,9 @@ menu_color menu_color_inst(
 	.q (bgr_menu_data)
 	);
 
+// Lookup Numbers and Draw Numbers
+	
+	
 // Lookup Powerups and Draw Powerups
 
 // Convert Trail Outputs into Color 
@@ -263,13 +263,6 @@ assign trail_output_color = trail_output==3'd4 ? 24'hFF00D8:trail_output_color_3
 
 wire[23:0] bgr_data_bike, bgr_data_help, bgr_data_bike_one, bgr_data_bike_two, bgr_data_bike_three, bgr_data_bike_four, bgr_data_bike_final;
 wire[23:0] bgr_data_bike_edge, bgr_trail_color;
-//assign bgr_data_bike = inBike ? bgr_data_help: bgr_background_data;
-//assign bgr_data_bike_one = (trail_output==3'd1 && ~inBikecenter&&bgr_data_bike==24'h000000) ? 24'hFF0000:bgr_data_bike;
-//assign bgr_data_bike_two = (trail_output==3'd2 && ~inBikecenter&&bgr_data_bike==24'h000000)? 24'h00A5FF:bgr_data_bike_one;
-//assign bgr_data_bike_three = (trail_output==3'd3 && ~inBikecenter&&bgr_data_bike==24'h000000)? 24'h00FF00:bgr_data_bike_two;
-//assign bgr_data_bike_four = (trail_output==3'd4 && ~inBikecenter&&bgr_data_bike==24'h000000)? 24'hFF3399:bgr_data_bike_three;
-//assign bgr_data_bike_edge = (bgr_menu_data!=24'h000000 && master_switch)?bgr_menu_data:bgr_data_bike_four;
-
 
 assign bgr_trail_color = (trail_output!=0 && ~inBikecenter) ? trail_output_color:bgr_background_data;
 assign bgr_data_bike = inBike && bgr_data_help!=24'h000000 ? bgr_data_help: bgr_trail_color;
