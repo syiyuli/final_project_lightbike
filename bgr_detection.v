@@ -7,7 +7,7 @@ module bgr_detection(background, background_data, addr, bikeLocation_middle, bik
 	output edge_detected;
 	
 	wire bgr_out;
-	assign bgr_out == (background==5'd0 && background_data!=24'h000000) || 
+	assign bgr_out = (background==5'd0 && background_data!=24'h000000) || 
 							(background==5'd1 && background_data!=24'h000000) ||
 							(background==5'd2 && background_data!=24'h0C1530) ||
 							(background==5'd3 && background_data!=24'h3A3A3A) ||
@@ -32,7 +32,9 @@ module bgr_detection(background, background_data, addr, bikeLocation_middle, bik
 	assign edge_detected_right_a = (bgr_out!=0 && bike_orient==32'd3 && addr==(bikeLocation_middle+32'd16-(32'd5*32'd640)));
 	assign edge_detected_right_b = (bgr_out!=0 && bike_orient==32'd3 && addr==(bikeLocation_middle+32'd16+(32'd5*32'd640)));
 	
+	// assign edge_detected_dead = (bike_orient==32'd5 && master_switch);
+	
 	or or_edge(edge_detected, edge_detected_left_a, edge_detected_left_b, edge_detected_up_a, edge_detected_up_b, edge_detected_down_a, edge_detected_down_b, edge_detected_right_a, edge_detected_right_b);
 
 	
-	
+	endmodule 
