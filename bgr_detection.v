@@ -33,6 +33,5 @@ module bgr_detection(background, background_data, addr, bikeLocation_middle, bik
 	assign edge_detected_right_b = (bgr_out!=0 && bike_orient==32'd3 && addr==(bikeLocation_middle+32'd16+(32'd5*32'd640)));
 		
 	or or_edge(edge_detected, edge_detected_left_a, edge_detected_left_b, edge_detected_up_a, edge_detected_up_b, edge_detected_down_a, edge_detected_down_b, edge_detected_right_a, edge_detected_right_b);
-
 	
 	endmodule 

@@ -1,6 +1,7 @@
-module convertTrailAddr(ADDR, trail_ADDR);
+module convertTrailAddr(ADDR, trail_ADDR, button_pressed);
 	input[18:0] ADDR;
-	output [11:0] trail_ADDR;
+	input button_pressed;
+	output [12:0] trail_ADDR;
 	
 	// wire [18:0] X,Y,Xtemp,temp_trail_ADDR, temp_trail_ADDR_1;
 	wire [31:0] X,Y,Xtemp,temp_trail_ADDR, temp_trail_ADDR_1;
@@ -24,6 +25,7 @@ module convertTrailAddr(ADDR, trail_ADDR);
 
 	//	assign temp_trail_ADDR = ((ADDR%640)+10*ADDR)<<6;
 
-	
-	assign trail_ADDR = temp_trail_ADDR[11:0];
+	wire button_menu;
+	assign button_menu = button_pressed ? 1'b1: 1'd0;
+	assign trail_ADDR = temp_trail_ADDR[12:0] + 3072*button_menu;
 endmodule
