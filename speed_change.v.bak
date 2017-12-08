@@ -1,0 +1,3 @@
+module speed_change();
+	input prevspeed, 
+endmodule

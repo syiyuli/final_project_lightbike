@@ -1,0 +1,5 @@
+module checkXbyYnum(startaddr, addr,out); 
+input[18:0] addr, startaddr;
+output out;
+
+endmodule 
