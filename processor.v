@@ -30,8 +30,9 @@
  *
  */ 
 module processor(masterSwitch, bikeoneOrient_IN, biketwoOrient_IN, bikethreeOrient_IN, bikefourOrient_IN, clock, reset, dmem_data_in, dmem_address, bikeone, bikeoneOrient, biketwo, biketwoOrient, bikethree, bikethreeOrient, bikefour, bikefourOrient, reg27,
-	background_in, bikeonepowerup_in, biketwopowerup_in, bikethreepowerup_in, bikefourpowerup_in, background_out, bikeonepowerup_out, biketwopowerup_out, bikethreepowerup_out, bikefourpowerup_out
-);
+	background_in, bikeonepowerup_in, biketwopowerup_in, bikethreepowerup_in, bikefourpowerup_in, background_out, bikeonepowerup_out, biketwopowerup_out, bikethreepowerup_out, bikefourpowerup_out,
+	speed_in, speed_out
+	);
     input clock, reset, masterSwitch;
 
     output [31:0] dmem_data_in;
@@ -190,9 +191,43 @@ module processor(masterSwitch, bikeoneOrient_IN, biketwoOrient_IN, bikethreeOrie
 	 output reg27;
 	 input [31:0] background_in, bikeonepowerup_in, biketwopowerup_in, bikethreepowerup_in, bikefourpowerup_in;
 	 output [31:0] background_out, bikeonepowerup_out, biketwopowerup_out, bikethreepowerup_out, bikefourpowerup_out;
-	
-// 	D myD(ADXin, BDXin, readAD, readBD, clock, reset, ren_outMWout, rd_outMWout, dataW, bikeone, bikeoneOrient, biketwo, biketwoOrient, bikethree, bikethreeOrient, bikefour, bikefourOrient, masterSwitch, reg27, bikeoneOrient_IN, biketwoOrient_IN, bikethreeOrient_IN, bikefourOrient_IN);
-	 D myD(ADXin, 
+
+	 input [31:0] speed_in;
+	 output [31:0] speed_out;
+//	 D myD(ADXin, 
+//			BDXin, 
+//			readAD, 
+//			readBD, 
+//			clock, 
+//			reset, 
+//			ren_outMWout, 
+//			rd_outMWout, 
+//			dataW, 
+//			bikeone, 
+//			bikeoneOrient,	
+//			biketwo, 
+//			biketwoOrient, 
+//			bikethree, 
+//			bikethreeOrient, 
+//			bikefour, 
+//			bikefourOrient, 
+//			masterSwitch, 
+//			reg27, 
+//			bikeoneOrient_IN, 
+//			biketwoOrient_IN, 
+//			bikethreeOrient_IN, 
+//			bikefourOrient_IN,
+//			background_in,
+//			bikeonepowerup_in,
+//			biketwopowerup_in,
+//			bikethreepowerup_in,
+//			bikefourpowerup_in,
+//			background_out,
+//			bikeonepowerup_out,
+//			biketwopowerup_out,
+//			bikethreepowerup_out,
+//			bikefourpowerup_out);
+	D myD(ADXin, 
 			BDXin, 
 			readAD, 
 			readBD, 
@@ -224,7 +259,10 @@ module processor(masterSwitch, bikeoneOrient_IN, biketwoOrient_IN, bikethreeOrie
 			bikeonepowerup_out,
 			biketwopowerup_out,
 			bikethreepowerup_out,
-			bikefourpowerup_out);
+			bikefourpowerup_out,
+			speed_in,
+			speed_out
+);
 
 	 // eXecute
 	 wire [4:0] aluopfin;

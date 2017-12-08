@@ -23,15 +23,24 @@ module vga_controller(iRST_n,
 							 reset_map,
 							 four_player_mode,
 							 background,
-							 master_switch
+							 master_switch,
+							 button_menu,
+							 menu_number,
+							 speed_value,
+							 playerone,
+							 playertwo,
+							 playerthree,
+							 playerfour
 							 );
 
 input reset, reset_map, master_switch;
+input [2:0] menu_number, speed_value, playerone, playertwo, playerthree, playerfour;
 input iRST_n;
 input [31:0] background;
 input clock;
 input four_player_mode;
 input iVGA_CLK;
+input button_menu;
 input [31:0] bikeone, bikeoneOrient, biketwo, biketwoOrient, bikethree, bikethreeOrient, bikefour, bikefourOrient;
 output reg oBLANK_n;
 output reg oHS;
@@ -66,6 +75,43 @@ begin
 end
 //////////////////////////
 //////INDEX addr.
+
+// Lookup Numbers and Draw Numbers
+wire inNumber, inSpeed, inFourPlayer, inPlayerone, inPlayertwo, inPlayerthree, inPlayerfour;
+wire inNumbertemp, inSpeedtemp, inFourPlayertemp, inPlayeronetemp, inPlayertwotemp, inPlayerthreetemp, inPlayerfourtemp;
+wire[18:0] numAddr, fourplayerAddr;
+wire [18:0] speedAddr, playeroneAddr, playertwoAddr, playerthreeAddr, playerfourAddr;
+wire[2:0] number, speed, players_one, players_two, players_three, players_four;
+// Cursors
+assign number = 3'd0;
+assign numAddr = 19'd121760 + 38400*(menu_number-button_menu);
+// Speed
+assign speed = speed_value;
+assign speedAddr = 19'd121760+19'd280 + 38400;
+// Four Player
+assign fourplayer = four_player_mode;
+assign fourplayerAddr = 19'd121760+19'd280 + 2*38400;
+// Players
+assign playeroneAddr = 19'd121760+19'd280 - 38400;
+assign playertwoAddr = 19'd121760+19'd280;
+assign playerthreeAddr = 19'd121760+19'd280 + 38400;
+assign playerfourAddr = 19'd121760+19'd280 + 2*38400;
+
+checkXbyYnum checkInNum(numAddr,ADDR,inNumber);
+checkXbyYnum checkInSpeed(speedAddr,ADDR,inSpeedtemp);
+checkXbyYnum checkInFourPlayer(fourplayerAddr,ADDR,inFourPlayertemp);
+checkXbyYnum checkInPlayerOne(playeroneAddr, ADDR, inPlayeronetemp);
+checkXbyYnum checkInPlayerTwo(playertwoAddr, ADDR, inPlayertwotemp);
+checkXbyYnum checkInPlayerThree(playerthreeAddr, ADDR, inPlayerthreetemp);
+checkXbyYnum checkInPlayerFour(playerfourAddr, ADDR, inPlayerfourtemp);
+
+and andinSpeed(inSpeed, inSpeedtemp, ~button_menu);
+and andinFourPlayer(inFourPlayer, inFourPlayertemp, ~button_menu);
+
+and andinPlayerone(inPlayerone, inPlayeronetemp, button_menu);
+and andinPlayertwo(inPlayertwo, inPlayertwotemp, button_menu);
+and andinPlayerthree(inPlayerthree, inPlayerthreetemp, button_menu);
+and andinPlayerfour(inPlayerfour, inPlayerfourtemp, button_menu);
 
 // Write Bike
 wire inBike, inBikeone, inBiketwo, inBikecenter, inBikeonecenter, inBiketwocenter;
@@ -117,19 +163,38 @@ wire bikeoneExactLoc, biketwoExactLoc, bikethreeExactLoc, bikefourExactLoc, writ
 wire [2:0] bikeone_trailcolor, biketwo_trailcolor, bikethree_trailcolor, bikefour_trailcolor;
 wire [2:0] trail_input, first_color, second_color, third_color, fourth_color;
 wire [2:0] trail_output;
+wire [13:0] cursors_location, speed_location, playersone_location, playerstwo_location, playersthree_location, playersfour_location, fourplayer_location;
 wire [31:0] bikeone_middle, biketwo_middle, bikethree_middle, bikefour_middle; 
-wire [11:0] store_trail_one, store_trail_two, store_trail_three, store_trail_four, trail_one, trail_two, trail_three, trail_four;
-wire [11:0] trail_location, menu_location, store_trail;
+wire [12:0] store_trail_one, store_trail_two, store_trail_three, store_trail_four, trail_one, trail_two, trail_three, trail_four;
+wire [12:0] trail_location, menu_location, store_trail;
 wire [13:0] background_location;
 
-convertTrailAddr convertTrailAddrtrail_Location(ADDR, trail_location);
-convertTrailAddr convertTrailmenu_location(ADDR, menu_location);
+convertTrailAddr convertTrailAddrtrail_Location(ADDR, trail_location, 1'b0);
+convertTrailAddr convertTrailmenu_location(ADDR, menu_location, button_menu);
 convertBackground convertBackground_Location(ADDR, background[4:0], background_location);
+convertNumbers getNumAddr(ADDR,numAddr,cursors_location,number);
+convertNumbers getSpeedAddr(ADDR,speedAddr,speed_location,speed+1);
+convertNumbers getFourPlayerAddr(ADDR,fourplayerAddr, fourplayer_location, fourplayer+1);
+convertNumbers getPlayeroneAddr(ADDR, playeroneAddr, playersone_location,playerone+1);
+convertNumbers getPlayertwoAddr(ADDR, playertwoAddr, playerstwo_location,playertwo+1);
+convertNumbers getPlayerthreeAddr(ADDR, playerthreeAddr, playersthree_location,playerthree+1);
+convertNumbers getPlayerfourAddr(ADDR, playerfourAddr, playersfour_location,playerfour+1);
+
+wire [13:0] numone_location, numtwo_location, numthree_location, numfour_location, numfive_location, numsix_location;
+assign numone_location = inNumber ? cursors_location:8'h0A;
+assign numtwo_location = (inSpeed && ~button_menu) ? speed_location:numone_location;
+assign numthree_location = (inFourPlayer && ~button_menu) ? fourplayer_location:numtwo_location;
+
+// Players
+assign numfour_location = (inPlayerone && button_menu) ? playersone_location:numthree_location;
+assign numfive_location = (inPlayertwo && button_menu) ? playerstwo_location:numfour_location;
+assign numsix_location = (inPlayerthree && button_menu) ? playersthree_location:numfive_location;
+assign numbers_location = (inPlayerfour && button_menu) ? playersfour_location:numsix_location;
 
 // Bike One
 assign bikeone_trailcolor = bikeoneColor + 3'd1;
 assign bikeone_middle = bikeone + 32'd15 + 32'd640*32'd15;
-convertTrailAddr convertTrailAddrbikeone_Location(bikeone_middle[18:0], trail_one);
+convertTrailAddr convertTrailAddrbikeone_Location(bikeone_middle[18:0], trail_one, 1'b0);
 assign bikeoneExactLoc = (bikeone_middle == ADDR)? 1'b1:1'b0;
 assign first_color = bikeoneExactLoc ? bikeone_trailcolor: 3'd0;
 assign store_trail_one = bikeoneExactLoc ? trail_one: trail_location;
@@ -137,7 +202,7 @@ assign store_trail_one = bikeoneExactLoc ? trail_one: trail_location;
 // Bike Two
 assign biketwo_trailcolor = biketwoColor + 3'd1;
 assign biketwo_middle = biketwo + 32'd15 + 32'd640*32'd15;
-convertTrailAddr convertTrailAddrbiketwo_Location(biketwo_middle[18:0], trail_two);
+convertTrailAddr convertTrailAddrbiketwo_Location(biketwo_middle[18:0], trail_two, 1'b0);
 assign biketwoExactLoc = (biketwo_middle == ADDR)? 1'b1:1'b0;
 assign second_color = biketwoExactLoc ? biketwo_trailcolor:first_color;
 assign store_trail_two = biketwoExactLoc ? trail_two: store_trail_one;
@@ -145,7 +210,7 @@ assign store_trail_two = biketwoExactLoc ? trail_two: store_trail_one;
 // Bike Three
 assign bikethree_trailcolor = bikethreeColor + 3'd1;
 assign bikethree_middle = bikethree + 32'd15 + 32'd640*32'd15;
-convertTrailAddr convertTrailAddrbikethree_Location(bikethree_middle[18:0], trail_three);
+convertTrailAddr convertTrailAddrbikethree_Location(bikethree_middle[18:0], trail_three, 1'b0);
 assign bikethreeExactLoc = (bikethree_middle == ADDR && four_player_mode)? 1'b1:1'b0;
 assign third_color = bikethreeExactLoc ? bikethree_trailcolor: second_color;
 assign store_trail_three = bikethreeExactLoc ? trail_three: store_trail_two;
@@ -153,7 +218,7 @@ assign store_trail_three = bikethreeExactLoc ? trail_three: store_trail_two;
 // Bike Four
 assign bikefour_trailcolor = bikefourColor + 3'd1;
 assign bikefour_middle = bikefour + 32'd15 + 32'd640*32'd15;
-convertTrailAddr convertTrailAddrbikefour_Location(bikefour_middle[18:0], trail_four);
+convertTrailAddr convertTrailAddrbikefour_Location(bikefour_middle[18:0], trail_four, 1'b0);
 assign bikefourExactLoc = (bikefour_middle == ADDR && four_player_mode)? 1'b1:1'b0;
 assign fourth_color = bikefourExactLoc ? bikefour_trailcolor: third_color;
 assign store_trail_four = bikefourExactLoc ? trail_four: store_trail_three;
@@ -250,10 +315,23 @@ menu_color menu_color_inst(
 	.q (bgr_menu_data)
 	);
 
-// Lookup Numbers and Draw Numbers
-	
-	
+wire [18:0] numbers_location;
+wire [7:0] numbers_color_index;
+numbers numbers_index_inst(
+	.address ( numbers_location ),
+	.clock ( VGA_CLK_n ),
+	.q ( numbers_color_index )
+	);
+wire [23:0] bgr_numbers_data; 	
+numbers_color numbers_color_inst(
+	.address ( numbers_color_index ),
+	.clock ( iVGA_CLK ),
+	.q (bgr_numbers_data)
+	);
+
+
 // Lookup Powerups and Draw Powerups
+
 
 // Convert Trail Outputs into Color 
 wire[23:0] trail_output_color, trail_output_color_1, trail_output_color_2, trail_output_color_3, trail_output_color_4;
@@ -262,15 +340,16 @@ assign trail_output_color_3 = trail_output==3'd3 ? 24'h12F100:trail_output_color
 assign trail_output_color = trail_output==3'd4 ? 24'hFF00D8:trail_output_color_3;
 
 wire[23:0] bgr_data_bike, bgr_data_help, bgr_data_bike_one, bgr_data_bike_two, bgr_data_bike_three, bgr_data_bike_four, bgr_data_bike_final;
-wire[23:0] bgr_data_bike_edge, bgr_trail_color;
+wire[23:0] bgr_data_bike_edge, bgr_trail_color, bgr_data_final;
 
 assign bgr_trail_color = (trail_output!=0 && ~inBikecenter) ? trail_output_color:bgr_background_data;
-assign bgr_data_bike = inBike && bgr_data_help!=24'h000000 ? bgr_data_help: bgr_trail_color;
+assign bgr_data_bike = (inBike && bgr_data_help!=24'h000000) ? bgr_data_help: bgr_trail_color;
 assign bgr_data_bike_edge = (bgr_menu_data!=24'h000000 && master_switch)?bgr_menu_data:bgr_data_bike;
+assign bgr_data_final = (bgr_numbers_data!=24'h000000 && master_switch && (inNumber || inSpeed || inPlayerone || inPlayertwo || inPlayerthree || inPlayerfour)) ? bgr_numbers_data : bgr_data_bike_edge;
 
 //////
 //////latch valid data at falling edge;
-always@(posedge VGA_CLK_n) bgr_data <= bgr_data_bike_edge;
+always@(posedge VGA_CLK_n) bgr_data <= bgr_data_final;
 assign b_data = bgr_data[23:16];
 assign g_data = bgr_data[15:8];
 assign r_data = bgr_data[7:0]; 
@@ -284,19 +363,3 @@ begin
 end
 
 endmodule
- 	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

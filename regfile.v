@@ -7,8 +7,9 @@ module regfile (
 		biketwoOrient, bikethree, bikethreeOrient, bikefour, bikefourOrient, 
 		masterSwitch, reg27, bikeoneOrient_IN, biketwoOrient_IN, bikethreeOrient_IN, bikefourOrient_IN,
 		background_in, bikeonepowerup_in, biketwopowerup_in, bikethreepowerup_in, bikefourpowerup_in,
-		background_out, bikeonepowerup_out, biketwopowerup_out, bikethreepowerup_out, bikefourpowerup_out
-);
+		background_out, bikeonepowerup_out, biketwopowerup_out, bikethreepowerup_out, bikefourpowerup_out,
+		speed_in, speed_out
+		);
 
    input clock, ctrl_writeEnable, ctrl_reset;
    input [4:0] ctrl_writeReg, ctrl_readRegA, ctrl_readRegB;
@@ -28,24 +29,31 @@ module regfile (
 	// decoder
 	decoder decoder1(out_decoder, ctrl_writeReg);
 	
-	// register
-// genvar i; 
+	// register	
+//	genvar i; 
 //	generate 
-//		for(i=0;i<21;i=i+1) begin: loop1
+//		for(i=0;i<9;i=i+1) begin: loop1
 //			and andEnable(writeEnable[i], ctrl_writeEnable,out_decoder[i]);
 //			register a_register(data_writeReg, writeEnable[i], clock, ctrl_reset,allRegisters[i]);
 //		end
 //	endgenerate
-
 	
 	genvar i; 
 	generate 
-		for(i=0;i<9;i=i+1) begin: loop1
+		for(i=0;i<8;i=i+1) begin: loop1
 			and andEnable(writeEnable[i], ctrl_writeEnable,out_decoder[i]);
 			register a_register(data_writeReg, writeEnable[i], clock, ctrl_reset,allRegisters[i]);
 		end
 	endgenerate
-// 
+
+	input [31:0] speed_in;
+	output [31:0] speed_out;
+	wire [31:0] speed_in_final;
+	and andEnable8(writeEnable[8], ctrl_writeEnable,out_decoder[8]);
+	assign speed_in_final = writeEnable[8] ? data_writeReg:speed_in;
+	register register_8(speed_in_final, ~masterSwitch, clock, ctrl_reset, allRegisters[8]);
+	assign speed_out = allRegisters[8];
+ 
 	wire [31:0] background_final, bikeonepowerup_final, biketwopowerup_final, bikethreepowerup_final, bikefourpowerup_final;
 	and andEnable9(writeEnable[9], ctrl_writeEnable,out_decoder[9]);
 	assign bikefourpowerup_final = writeEnable[9] ? data_writeReg:bikefourpowerup_in;
@@ -65,7 +73,7 @@ module regfile (
 	
 	and andEnable13(writeEnable[13], ctrl_writeEnable,out_decoder[13]);
 	assign background_final = writeEnable[13] ? data_writeReg:background_in;
-	register register_13(background_final, ~masterSwitch, clock, ctrl_reset,allRegisters[13]);	
+	register register_13(background_final, ~masterSwitch, clock,1'b0,allRegisters[13]);	
 	
 	genvar m; 
 	generate 
